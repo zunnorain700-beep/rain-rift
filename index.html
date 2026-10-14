@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+<meta name="theme-color" content="#070a16" />
+<meta name="description" content="Rain Rift — an original browser-based 3D arcade kart racer. Four tracks, six karts, four racers, power-ups, local leaderboards." />
+<title>Rain Rift — Arcade Kart Racing</title>
+<link rel="icon" type="image/svg+xml" href="assets/favicon.svg" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="style.css" />
+<script type="importmap">
+{
+  "imports": {
+    "three": "https://cdn.jsdelivr.net/npm/three@0.160.1/build/three.module.js"
+  }
+}
+</script>
+</head>
+<body>
+
+<!-- ================= BOOT / LOADING ================= -->
+<section class="screen screen--loading is-active" id="screen-loading" aria-label="Loading">
+  <div class="loader">
+    <div class="loader__logo">
+      <span class="logo-mark" aria-hidden="true"></span>
+      <h1 class="logo-type">RAIN&nbsp;RIFT</h1>
+      <p class="logo-tag">ARCADE KART RACING</p>
+      <p class="brand__credit brand__credit--center">Created by Zunnorain Carti</p>
+    </div>
+    <div class="loader__bar"><div class="loader__fill" id="load-fill"></div></div>
+    <p class="loader__status" id="load-status">Warming up the grid…</p>
+  </div>
+</section>
+
+<!-- ================= WEBGL FALLBACK ================= -->
+<section class="screen screen--nogl" id="screen-nogl" aria-label="Unsupported">
+  <div class="panel panel--narrow center">
+    <div class="warn-icon" aria-hidden="true">⚠</div>
+    <h2>3D acceleration unavailable</h2>
+    <p class="muted">This game needs <strong>WebGL</strong>, which your browser or device has disabled.</p>
+    <ul class="bullets">
+      <li>Enable <em>Hardware acceleration</em> in your browser settings.</li>
+      <li>Update your graphics driver or try a different browser.</li>
+      <li>Close other GPU-heavy tabs and reload.</li>
+    </ul>
+    <div class="btn-row">
+      <button class="btn btn--primary" id="btn-retry-webgl">Try again</button>
+    </div>
+  </div>
+</section>
+
+<!-- ================= MAIN MENU ================= -->
+<section class="screen" id="screen-menu" data-nav-target="menu">
+  <div class="menu-bg" aria-hidden="true"><canvas id="menu-canvas"></canvas></div>
+  <div class="menu-shell">
+    <header class="brand">
+      <span class="logo-mark" aria-hidden="true"></span>
+      <div>
+        <h1 class="logo-type">RAIN&nbsp;RIFT</h1>
+        <p class="logo-tag">ARCADE KART RACING · ORIGINAL SERIES</p>
+        <p class="brand__credit">Created by Zunnorain Carti</p>
+      </div>
+    </header>
+
+    <nav class="menu-nav">
+      <button class="btn btn--primary btn--lg" data-nav="tracks">▶ &nbsp;Play</button>
+      <button class="btn btn--ghost" data-nav="garage">Garage</button>
+      <button class="btn btn--ghost" data-nav="characters">Characters</button>
+      <button class="btn btn--ghost" data-nav="leaderboard">Leaderboards</button>
+      <button class="btn btn--ghost" data-nav="settings">Settings</button>
+      <button class="btn btn--ghost" data-nav="howto">How to Play</button>
+    </nav>
+
+    <div class="menu-slots">
+      <div class="slot" id="slot-character">
+        <span class="slot__label">Racer</span>
+        <span class="slot__value" id="menu-char-name">—</span>
+      </div>
+      <div class="slot" id="slot-vehicle">
+        <span class="slot__label">Kart</span>
+        <span class="slot__value" id="menu-vehicle-name">—</span>
+      </div>
+      <div class="slot" id="slot-progress">
+        <span class="slot__label">Best result</span>
+        <span class="slot__value" id="menu-best">—</span>
+      </div>
+    </div>
+
+    <footer class="menu-foot">
+      <span>v1.0 · 100% original assets · runs fully in your browser</span>
+    </footer>
+  </div>
+</section>
+
+<!-- ================= CHARACTER SELECT ================= -->
+<section class="screen" id="screen-characters" data-nav-target="characters">
+  <header class="topbar">
+    <button class="btn btn--icon" data-nav="menu" aria-label="Back">‹</button>
+    <h2>Choose your racer</h2>
+    <span class="topbar__spacer"></span>
+  </header>
+
+  <div class="select-layout">
+    <div class="stage">
+      <canvas id="char-canvas"></canvas>
+      <div class="stage__hint">Auto-rotating preview</div>
+      <button class="stage-arrow stage-arrow--l" id="char-prev" aria-label="Previous character">‹</button>
+      <button class="stage-arrow stage-arrow--r" id="char-next" aria-label="Next character">›</button>
+    </div>
+
+    <aside class="info-card">
+      <p class="eyebrow" id="char-role">Role</p>
+      <h3 class="info-card__title" id="char-name">Name</h3>
+      <p class="info-card__desc" id="char-desc">Description</p>
+
+      <div class="stat" data-stat="speed"><span>Speed</span><div class="bar"><i id="bar-char-speed"></i></div></div>
+      <div class="stat" data-stat="accel"><span>Acceleration</span><div class="bar"><i id="bar-char-accel"></i></div></div>
+      <div class="stat" data-stat="handling"><span>Handling</span><div class="bar"><i id="bar-char-handling"></i></div></div>
+
+      <div class="trait-row" id="char-traits"></div>
+
+      <div class="btn-row">
+        <button class="btn btn--primary" id="char-confirm">Confirm racer</button>
+      </div>
+      <p class="micro">Stats give small bonuses to any kart you drive.</p>
+    </aside>
+  </div>
+</section>
+
+<!-- ================= GARAGE ================= -->
+<section class="screen" id="screen-garage" data-nav-target="garage">
+  <header class="topbar">
+    <button class="btn btn--icon" data-nav="menu" aria-label="Back">‹</button>
+    <h2>Garage</h2>
+    <span class="topbar__spacer"></span>
+  </header>
+
+  <div class="select-layout select-layout--garage">
+    <div class="stage">
+      <canvas id="garage-canvas"></canvas>
+      <div class="stage__hint">Drag to rotate</div>
+    </div>
+
+    <aside class="info-card">
+      <p class="eyebrow" id="veh-class">Class</p>
+      <h3 class="info-card__title" id="veh-name">Vehicle</h3>
+      <p class="info-card__desc" id="veh-desc">Description</p>
+
+      <div class="stat"><span>Top speed</span><div class="bar"><i id="bar-veh-speed"></i></div></div>
+      <div class="stat"><span>Acceleration</span><div class="bar"><i id="bar-veh-accel"></i></div></div>
+      <div class="stat"><span>Handling</span><div class="bar"><i id="bar-veh-handling"></i></div></div>
+      <div class="stat"><span>Stability</span><div class="bar"><i id="bar-veh-stability"></i></div></div>
+
+      <div class="strengths">
+        <span class="pill pill--good" id="veh-good">Strength</span>
+        <span class="pill pill--bad" id="veh-bad">Weakness</span>
+      </div>
+
+      <p class="eyebrow eyebrow--tight">Paint</p>
+      <div class="swatches" id="paint-swatches"></div>
+
+      <div class="btn-row">
+        <button class="btn btn--primary" id="garage-confirm">Confirm kart</button>
+      </div>
+    </aside>
+  </div>
+
+  <div class="vehicle-strip" id="vehicle-list" role="listbox" aria-label="Vehicles"></div>
+</section>
+
+<!-- ================= TRACK SELECT ================= -->
+<section class="screen" id="screen-tracks" data-nav-target="tracks">
+  <header class="topbar">
+    <button class="btn btn--icon" data-nav="menu" aria-label="Back">‹</button>
+    <h2>Select track</h2>
+    <span class="topbar__spacer"></span>
+  </header>
+
+  <div class="difficulty">
+    <span class="difficulty__label">Difficulty</span>
+    <div class="segmented" id="difficulty-group" role="radiogroup" aria-label="Difficulty">
+      <button class="seg" data-difficulty="easy">Easy</button>
+      <button class="seg is-on" data-difficulty="medium">Medium</button>
+      <button class="seg" data-difficulty="hard">Hard</button>
+    </div>
+    <p class="difficulty__hint" id="difficulty-hint">Balanced rivals, standard grip.</p>
+  </div>
+
+  <div class="track-grid" id="track-grid"></div>
+
+  <div class="start-bar">
+    <div class="start-bar__meta">
+      <span id="start-loadout">Racer · Kart</span>
+      <span id="start-track-meta">3 laps</span>
+    </div>
+    <button class="btn btn--primary btn--lg" id="btn-start-race">Start race →</button>
+  </div>
+</section>
+
+<!-- ================= RACE ================= -->
+<section class="screen screen--race" id="screen-race">
+  <canvas id="race-canvas"></canvas>
+
+  <div class="hud" id="hud">
+    <div class="hud__tl">
+      <div class="hud-pill hud-pill--pos"><small>POS</small><b id="hud-pos">6/6</b></div>
+      <div class="hud-pill"><small>LAP</small><b id="hud-lap">1/3</b></div>
+      <div class="hud-pill"><small>TIME</small><b id="hud-time">0:00.00</b></div>
+    </div>
+
+    <div class="hud__tr">
+      <canvas id="minimap" width="170" height="170" aria-label="Track map"></canvas>
+      <button class="btn btn--icon hud__pause" id="btn-pause" aria-label="Pause">❚❚</button>
+    </div>
+
+    <div class="hud__bl">
+      <div class="speedo">
+        <svg viewBox="0 0 200 120" class="speedo__dial" aria-hidden="true">
+          <path class="dial-track" d="M20 110 A80 80 0 0 1 180 110" />
+          <path class="dial-fill" id="dial-fill" d="M20 110 A80 80 0 0 1 180 110" />
+          <g id="dial-needle"><line x1="100" y1="105" x2="100" y2="40" /><circle cx="100" cy="105" r="6" /></g>
+        </svg>
+        <div class="speedo__read"><b id="hud-speed">0</b><span>km/h</span></div>
+      </div>
+      <div class="lap-times" id="hud-lap-times"></div>
+    </div>
+
+    <div class="hud__br">
+      <div class="item-slot" id="item-slot">
+        <div class="item-slot__icon" id="item-icon" data-item=""></div>
+        <span class="item-slot__name" id="item-name">No item</span>
+        <span class="item-slot__key">SHIFT</span>
+      </div>
+      <div class="boost-meter"><i id="boost-fill"></i></div>
+    </div>
+
+    <div class="hud__center">
+      <div class="countdown" id="countdown"></div>
+      <div class="toast" id="toast"></div>
+    </div>
+  </div>
+
+  <!-- Touch controls -->
+  <div class="touch" id="touch-controls" aria-hidden="true">
+    <div class="touch__side touch__side--left">
+      <button class="tbtn tbtn--wheel" id="tc-left" data-touch="left">◀</button>
+      <button class="tbtn tbtn--wheel" id="tc-right" data-touch="right">▶</button>
+    </div>
+    <div class="touch__side touch__side--right">
+      <button class="tbtn tbtn--item" id="tc-item" data-touch="item">✦</button>
+      <button class="tbtn tbtn--drift" id="tc-drift" data-touch="drift">DRIFT</button>
+      <button class="tbtn tbtn--brake" id="tc-brake" data-touch="brake">BRK</button>
+      <button class="tbtn tbtn--gas" id="tc-gas" data-touch="throttle">GAS</button>
+    </div>
+  </div>
+
+  <!-- Pause -->
+  <div class="overlay" id="pause-overlay" hidden>
+    <div class="panel panel--narrow">
+      <h2 class="panel__title">Paused</h2>
+      <p class="muted" id="pause-meta">Track · Difficulty</p>
+      <div class="stack">
+        <button class="btn btn--primary" id="btn-resume">Resume</button>
+        <button class="btn btn--ghost" id="btn-restart">Restart race</button>
+        <button class="btn btn--ghost" id="btn-quit">Quit to menu</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= RESULTS ================= -->
+<section class="screen" id="screen-results">
+  <div class="results">
+    <p class="eyebrow center" id="res-track">Track</p>
+    <h2 class="results__pos" id="res-position">1st</h2>
+    <p class="results__sub" id="res-subtitle">Victory!</p>
+
+    <div class="result-cards">
+      <div class="rcard"><span>Race time</span><b id="res-time">0:00.00</b></div>
+      <div class="rcard"><span>Best lap</span><b id="res-bestlap">0:00.00</b></div>
+      <div class="rcard"><span>Points</span><b id="res-points">+0</b></div>
+      <div class="rcard"><span>Difficulty</span><b id="res-difficulty">Medium</b></div>
+    </div>
+
+    <div class="standings">
+      <h4>Race standings</h4>
+      <ol id="res-standings"></ol>
+    </div>
+
+    <div class="name-row">
+      <label for="res-name">Leaderboard name</label>
+      <input id="res-name" maxlength="14" autocomplete="off" spellcheck="false" />
+    </div>
+    <p class="micro center" id="res-saved">Saved to this browser's local leaderboard.</p>
+
+    <div class="btn-row btn-row--center">
+      <button class="btn btn--primary" id="btn-race-again">Race again</button>
+      <button class="btn btn--ghost" id="btn-next-track">Next track</button>
+      <button class="btn btn--ghost" data-nav="menu">Main menu</button>
+    </div>
+  </div>
+</section>
+
+<!-- ================= LEADERBOARD ================= -->
+<section class="screen" id="screen-leaderboard" data-nav-target="leaderboard">
+  <header class="topbar">
+    <button class="btn btn--icon" data-nav="menu" aria-label="Back">‹</button>
+    <h2>Leaderboards</h2>
+    <button class="btn btn--icon" id="btn-clear-races" title="Clear race log">🗑</button>
+  </header>
+
+  <div class="stats-grid" id="stats-grid"></div>
+
+  <p class="notice">This leaderboard is <strong>local to this browser</strong>. Results are stored in <code>localStorage</code> on this device only — there is no server and no global ranking.</p>
+
+  <div class="table-wrap">
+    <table class="table" id="lb-table">
+      <thead>
+        <tr><th>#</th><th>Player</th><th>Pos</th><th>Vehicle</th><th>Time</th><th>Track</th><th>Difficulty</th><th>Date</th></tr>
+      </thead>
+      <tbody id="lb-body"></tbody>
+    </table>
+    <p class="empty" id="lb-empty">No races recorded yet — hit the track!</p>
+  </div>
+
+  <div class="btn-row btn-row--center">
+    <button class="btn btn--primary" data-nav="tracks">Race now</button>
+  </div>
+</section>
+
+<!-- ================= SETTINGS ================= -->
+<section class="screen" id="screen-settings" data-nav-target="settings">
+  <header class="topbar">
+    <button class="btn btn--icon" data-nav="menu" aria-label="Back">‹</button>
+    <h2>Settings</h2>
+    <span class="topbar__spacer"></span>
+  </header>
+
+  <div class="settings-grid">
+    <div class="set-group">
+      <h4>Audio</h4>
+      <label class="range"><span>Master volume <b id="val-master">100%</b></span><input type="range" id="set-master" min="0" max="100" /></label>
+      <label class="range"><span>Music <b id="val-music">70%</b></span><input type="range" id="set-music" min="0" max="100" /></label>
+      <label class="range"><span>Sound effects <b id="val-sfx">90%</b></span><input type="range" id="set-sfx" min="0" max="100" /></label>
+      <label class="switch"><input type="checkbox" id="set-mute" /><span></span>Mute all audio</label>
+      <label class="switch"><input type="checkbox" id="set-voice" checked /><span></span>Driver voice lines</label>
+    </div>
+
+    <div class="set-group">
+      <h4>Graphics</h4>
+      <div class="segmented segmented--full" id="quality-group" role="radiogroup" aria-label="Graphics quality">
+        <button class="seg" data-quality="low">Low</button>
+        <button class="seg is-on" data-quality="medium">Medium</button>
+        <button class="seg" data-quality="high">High</button>
+      </div>
+      <p class="micro" id="quality-hint">Balanced visuals and frame rate.</p>
+      <label class="switch"><input type="checkbox" id="set-touch" /><span></span>Always show touch controls</label>
+    </div>
+
+    <div class="set-group">
+      <h4>Profile</h4>
+      <label class="field"><span>Player name</span><input id="set-name" maxlength="14" autocomplete="off" spellcheck="false" placeholder="RACER" /></label>
+      <button class="btn btn--ghost btn--danger" id="btn-reset-progress">Reset all saved progress</button>
+      <p class="micro">Clears settings, personal bests and the local leaderboard for this browser.</p>
+    </div>
+
+    <div class="set-group">
+      <h4>Controls</h4>
+      <table class="keymap">
+        <tr><td><kbd>W</kbd>/<kbd>↑</kbd></td><td>Accelerate</td></tr>
+        <tr><td><kbd>S</kbd>/<kbd>↓</kbd></td><td>Brake / reverse</td></tr>
+        <tr><td><kbd>A</kbd><kbd>D</kbd>/<kbd>←</kbd><kbd>→</kbd></td><td>Steer</td></tr>
+        <tr><td><kbd>Space</kbd></td><td>Drift / handbrake</td></tr>
+        <tr><td><kbd>Shift</kbd></td><td>Use power-up (boost)</td></tr>
+        <tr><td><kbd>Esc</kbd></td><td>Pause</td></tr>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- ================= HOW TO PLAY ================= -->
+<section class="screen" id="screen-howto" data-nav-target="howto">
+  <header class="topbar">
+    <button class="btn btn--icon" data-nav="menu" aria-label="Back">‹</button>
+    <h2>How to play</h2>
+    <span class="topbar__spacer"></span>
+  </header>
+
+  <div class="howto">
+    <div class="howto__col">
+      <h4>Race basics</h4>
+      <ol class="bullets bullets--ordered">
+        <li>Pick a racer, then a kart in the Garage.</li>
+        <li>Choose a track and a difficulty, then start.</li>
+        <li>Pass every checkpoint to make a lap count — cut the course and the lap is void.</li>
+        <li>Finish top 3 to earn points and climb your local leaderboard.</li>
+      </ol>
+
+      <h4>Driving tips</h4>
+      <ul class="bullets">
+        <li>Tap <kbd>Space</kbd> mid-corner to break traction, then steer into the slide for a drift.</li>
+        <li>Drifting fills the boost meter — release for a short surge of speed.</li>
+        <li>Racing line beats top speed: brake before the corner, not in it.</li>
+        <li>Off-road costs serious speed. Barriers cost even more.</li>
+      </ul>
+    </div>
+
+    <div class="howto__col">
+      <h4>Power-ups</h4>
+      <div class="item-help">
+        <div><span class="item-chip" data-item="nitro"></span><b>Nitro Boost</b><p>Big speed surge for a few seconds.</p></div>
+        <div><span class="item-chip" data-item="shield"></span><b>Energy Shield</b><p>Absorbs the next hit and shoves rivals aside.</p></div>
+        <div><span class="item-chip" data-item="oil"></span><b>Oil Slick</b><p>Drops a hazard behind you that spins out anyone who hits it.</p></div>
+        <div><span class="item-chip" data-item="pulse"></span><b>Pulse Wave</b><p>Disrupts nearby rivals, killing their speed for a moment.</p></div>
+      </div>
+      <p class="micro">Every crate shows what it holds — colour, glyph and name tag. Drive through one to take it, then press <kbd>Shift</kbd> to use it. Crates respawn with a new power-up after a few seconds.</p>
+
+      <h4>Difficulty</h4>
+      <ul class="bullets">
+        <li><b>Easy</b> — slower, sloppier rivals, forgiving grip and collision recovery.</li>
+        <li><b>Medium</b> — balanced rivals and standard physics.</li>
+        <li><b>Hard</b> — faster, aggressive rivals, less grip assist, harsher mistakes.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<noscript><div class="noscript">Rain Rift needs JavaScript enabled to run.</div></noscript>
+
+<script type="module" src="src/main.js"></script>
+</body>
+</html>

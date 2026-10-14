@@ -1,0 +1,23 @@
+{
+  "name": "rain-rift",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Rain Rift — an original, fully client-side 3D arcade kart racer (Three.js + Web Audio).",
+  "license": "MIT",
+  "scripts": {
+    "start": "npx --yes serve -l 8080 .",
+    "dev": "npx --yes serve -l 8080 .",
+    "serve:python": "python -m http.server 8080"
+  },
+  "keywords": [
+    "threejs",
+    "webgl",
+    "kart-racing",
+    "arcade",
+    "game",
+    "web-audio"
+  ],
+  "dependencies": {},
+  "devDependencies": {}
+}
