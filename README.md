@@ -8,8 +8,8 @@ Race through neon-lit streets, desert canyons, coastal roads, and forest trails 
 
 Built with JavaScript and "Three.js" (https://threejs.org/), Rain Rift runs directly in your browser with no backend or installation required.
 
-
-https://rain-raft.netlify.app
+Also playable online at:
+https://rain-rift.netlify.app/
 
 ---
 
