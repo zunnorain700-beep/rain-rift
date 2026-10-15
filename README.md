@@ -1,192 +1,186 @@
-# Rain Rift
+🌧️ Rain Rift
 
-**Created by Zunnorain Carti**
+A 3D arcade kart racing game built for the browser.
 
-An original, fully client-side 3D arcade kart racer. Four circuits, six karts,
-four racers, four power-ups, three real difficulty tiers, procedurally built
-audio, and a leaderboard that never leaves your browser. No backend, no API
-keys, no bundler — plain HTML, CSS and ES modules with Three.js.
+Created by Zunnorain Carti
 
----
+Race through neon-lit streets, desert canyons, coastal roads, and forest trails in Rain Rift, an arcade-style kart racer featuring customizable vehicles, rival AI racers, power-ups, and fast-paced drifting.
 
-## Features
-
-- **4 tracks** — Neon City, Desert Canyon, Coastal Circuit, Forest Rush. Every
-  road, barrier, prop and texture is generated in code from a closed spline.
-- **6 vehicles** — Sport, muscle, buggy, rally, electric and truck, each with
-  its own stats, 3D model and 10 paint colours in the garage.
-- **4 racers** — selectable with an auto-rotating 3D preview, stat bars and
-  synthesized voice lines.
-- **4 power-ups** — Nitro Boost, Energy Shield, Oil Slick, Pulse Wave. Item
-  crates show their colour, glyph and a floating name tag, so you always know
-  what you are about to pick up.
-- **3 difficulties** — Easy / Medium / Hard change rival top speed, aggression,
-  grip assist and mistake rate. Rival speed and acceleration are 90%, 105%, and
-  120% of each vehicle's base race tuning; harder rivals brake later, carry more
-  corner speed, and use power-ups more often. Player speed stays the same.
-- **Full race loop** — grid countdown, checkpoints, 3 laps, live positions,
-  minimap, wrong-way warning, drift with charge-to-boost, collisions, item use,
-  pause / restart / quit, results screen and local leaderboard.
-- **Audio** — everything is synthesized with the Web Audio API: engine pitch
-  tracks speed, tire squeal follows slip, music, countdown beeps, boost whoosh,
-  menu blips and character voices. Master / music / SFX volume + mute.
-- **Displays** — responsive layout with a touch control pad, three graphics
-  quality levels, delta-time movement, resize handling and graceful WebGL
-  fallback.
-
-## Controls
-
-| Key | Action |
-| --- | --- |
-| `W` / `↑` | Accelerate |
-| `S` / `↓` | Brake / reverse |
-| `A` `D` / `←` `→` | Steer |
-| `Space` | Drift / handbrake (hold through a corner, release for a boost) |
-| `Shift` or `E` | Use power-up |
-| `Esc` | Pause |
-
-**Touch:** on-screen steering pad plus throttle, brake, drift and item buttons
-appear automatically on touch devices (and can be forced on in Settings).
+Built with JavaScript and "Three.js" (https://threejs.org/), Rain Rift runs directly in your browser with no backend or installation required.
 
 ---
 
-## Run it locally
+🎮 Game Features
 
-The game must be served over HTTP — ES modules and import maps do not work from
-a `file://` URL.
+- 4 Unique Tracks — Neon City, Desert Canyon, Coastal Circuit, and Forest Rush.
+- 6 Playable Vehicles — Sport, Muscle, Buggy, Rally, Electric, and Truck, each with unique stats and handling.
+- 10 Paint Colours — Customize your vehicle in the garage.
+- 4 Selectable Racers — Choose your character and explore rotating 3D previews.
+- 4 Power-Ups — Nitro Boost, Energy Shield, Oil Slick, and Pulse Wave.
+- 3 Difficulty Levels — Easy, Medium, and Hard, with different AI speeds and behaviours.
+- Arcade Drifting — Charge your drift and release it to gain a speed boost.
+- AI Opponents — Race against rivals that follow racing lines and use power-ups.
+- Race HUD — Track your speed, position, lap count, checkpoints, and race progress.
+- Minimap — Keep track of the circuit while racing.
+- Dynamic Audio — Procedurally generated engine sounds, tyre squeals, music, and sound effects.
+- Local Leaderboard — Save your race results and track your progress.
+- Mobile Controls — Touch-friendly controls for supported mobile devices.
+- Graphics Settings — Choose between three quality levels to suit your device.
 
-```bash
-# option 1 — Node (no install, package.json scripts included)
-npm start            # serves on http://localhost:8080
+🕹️ Controls
 
-# option 2 — Python
+Input| Action
+"W" / "↑"| Accelerate
+"S" / "↓"| Brake / Reverse
+"A" / "←"| Steer Left
+"D" / "→"| Steer Right
+"Space"| Drift / Handbrake
+"Shift" / "E"| Use Power-Up
+"Esc"| Pause / Resume
+
+Mobile: Use the on-screen steering pad and action buttons to control your kart.
+
+🏁 How to Play
+
+1. Select your racer and customize your vehicle.
+2. Choose a track and difficulty level.
+3. Wait for the countdown and get ready to race.
+4. Complete three laps while passing checkpoints and competing against AI opponents.
+5. Collect item crates and use power-ups to gain an advantage.
+6. Drift through corners and release to build speed.
+7. Finish the race, check your results, and aim for a better position next time.
+
+⚙️ Built With
+
+- HTML5 — Game interface and page structure.
+- CSS3 — Styling, responsive layouts, menus, and HUD.
+- JavaScript ES Modules — Game logic, physics, AI, and state management.
+- Three.js — 3D rendering, vehicle models, tracks, and scenery.
+- Web Audio API — Procedural audio and sound effects.
+- LocalStorage — Local settings, player progress, and race history.
+
+🚀 Run Locally
+
+Requirements
+
+- A modern browser with WebGL support.
+- Node.js or Python for a local HTTP server.
+- An internet connection for loading Three.js from the CDN, unless a local copy is configured.
+
+Start the game
+
+Clone or download the repository, then open a terminal in the project directory.
+
+Using Node.js:
+
+npm start
+
+Using Python:
+
 python -m http.server 8080
 
-# option 3 — any static server of your choice
-npx serve -l 8080 .
-```
+Open the following address in your browser:
 
-Open <http://localhost:8080> and click **Play**.
+"http://localhost:8080"
 
-> First load fetches Three.js `0.160.1` from the jsDelivr CDN (pinned in the
-> import map in `index.html`) and the browser caches it afterwards. For a fully
-> offline build, download `three.module.js` into `assets/` and change one line
-> of the import map.
+Select Play to start racing.
 
-## Deploy
+«Note: Opening "index.html" directly using "file://" is not supported because the game uses JavaScript ES modules and an import map.»
 
-### GitHub + Netlify (recommended)
+📁 Project Structure
 
-1. Create a repository and push the project:
-   ```bash
-   git init
-   git add .
-   git commit -m "Rain Rift v1.0"
-   git branch -M main
-   git remote add origin https://github.com/<you>/rain-rift.git
-   git push -u origin main
-   ```
-2. In the Netlify dashboard: **Add new site → Import an existing project** and
-   pick the repository. `netlify.toml` already sets the publish directory (`.`,
-   i.e. the repo root) and security/cache headers, so no build settings are
-   needed — build command stays empty.
-3. Deploy. Your site is live on a `*.netlify.app` URL.
+rain-rift/
+├── index.html
+├── style.css
+├── package.json
+├── netlify.toml
+├── assets/
+│   └── favicon.svg
+└── src/
+    ├── main.js
+    ├── ui.js
+    ├── game.js
+    ├── physics.js
+    ├── ai.js
+    ├── input.js
+    ├── powerups.js
+    ├── tracks.js
+    ├── characters.js
+    ├── vehicles.js
+    ├── preview.js
+    ├── audio.js
+    ├── data.js
+    └── storage.js
 
-### Other options
+Core Systems
 
-- **Drag and drop** — drop the whole project folder onto
-  <https://app.netlify.com/drop>. Fastest way to get a link.
-- **Netlify CLI**
-  ```bash
-  npm i -g netlify-cli
-  netlify deploy --prod
-  ```
+File| Responsibility
+"main.js"| Initialization and main game loop
+"game.js"| Race lifecycle, camera, rankings, and results
+"physics.js"| Vehicle movement, drifting, and collisions
+"ai.js"| Rival driving and difficulty behaviour
+"tracks.js"| Procedural circuits and scenery
+"vehicles.js"| Vehicle models and customization
+"characters.js"| Racer models and animations
+"powerups.js"| Item crates and power-up effects
+"input.js"| Keyboard and touch input
+"audio.js"| Sound effects, music, and engine audio
+"preview.js"| 3D previews in selection menus
+"ui.js"| Menus, HUD, settings, and results
+"data.js"| Game content and configuration
+"storage.js"| Local saves and player settings
 
-Any other static host (GitHub Pages, Cloudflare Pages, a school server) works
-too: publish the folder containing `index.html`.
+💾 Save Data
+
+Rain Rift uses browser "localStorage" to save:
+
+- Game settings and audio preferences
+- Selected racer and vehicle
+- Vehicle paint colour
+- Track records and race results
+- Career statistics and leaderboard entries
+
+All saved data stays in the current browser. There is no online account or server-side leaderboard, so progress does not automatically transfer between browsers or devices.
+
+You can reset saved progress through the game's settings.
+
+🖥️ Compatibility
+
+Rain Rift is designed for modern versions of Chrome, Edge, Firefox, and Safari with WebGL support.
+
+Graphics settings allow players to reduce rendering quality and disable shadows for better performance on less powerful devices. The interface also adapts to smaller screens and supported touch devices.
+
+Performance may vary depending on your device and browser.
+
+🧪 Development & Debugging
+
+For development, the game exposes a "window.__TR" debug object with access to selected game systems and controls.
+
+Example: start a race on Forest Rush at Hard difficulty from the browser console.
+
+__TR.startRace({
+  trackId: 'forest',
+  difficulty: 'hard'
+});
+
+The project includes separate modules for game physics, AI, audio, rendering, input, and interface logic to make individual systems easier to maintain and improve.
+
+🔒 Privacy
+
+Rain Rift does not require registration, collect analytics through a game backend, or transmit locally saved race progress to a server.
+
+Game settings and results are stored in your browser's local storage.
+
+📜 Credits & License
+
+Created by Zunnorain Carti
+
+Built with "Three.js" (https://threejs.org/), distributed under the MIT License.
+
+Rain Rift's game environments, models, effects, and audio are generated through code. Third-party libraries remain subject to their respective licenses.
+
+The project is released under the MIT License. See the repository's license information for details.
 
 ---
 
-## Project structure
-
-```
-index.html          App shell: menu, HUD, every screen (import map lives here)
-style.css           Design system, screens, HUD, responsive + touch layout
-netlify.toml        Static publish config and response headers
-package.json        type: module + local serve scripts
-assets/favicon.svg  Original mark
-src/
-  main.js           Boot, WebGL check, race lifecycle, global loop
-  ui.js             Screens, HUD bridge, results, leaderboard, settings
-  game.js           Race orchestration: camera, events, ranking, results
-  physics.js        Arcade kart dynamics, laps, checkpoints, collisions
-  ai.js             Rival driving, racing lines, rubber-banding, item use
-  input.js          Keyboard + touch input, pause hook
-  powerups.js       Item crates, hazards, effect visuals
-  tracks.js         Procedural circuits, road meshes, scenery, minimap data
-  characters.js     Racer models and animation
-  vehicles.js       Kart models, wheels, steering, paint
-  preview.js        Auto-rotating 3D previews (characters + garage)
-  audio.js          Web Audio: engine, squeal, music, sfx, voices
-  data.js           Characters, vehicles, tracks, difficulties, power-ups
-  storage.js        LocalStorage schema (settings, loadout, results, stats)
-```
-
-## How it works
-
-- **Rendering** — Three.js via import map, one WebGL context per race (the
-  canvas is recreated on every start and fully disposed on exit, so restarts
-  never leak contexts).
-- **Physics** — forward/lateral velocity split for a drift-happy arcade feel;
-  movement is integrated with delta time so frame rate never changes speed.
-  The centreline is sampled into 400 points and split into 8 checkpoint
-  sectors; a lap counts when sector 0 is re-entered after sector 7.
-- **AI** — rivals follow a smoothed racing line with per-vehicle pace, difficulty
-  multipliers and light rubber-banding, and they use their items.
-- **Audio** — oscillators, noise buffers and filters only; the engine responds
-  to speed, throttle, braking and boosts, with simulated gear changes. Road
-  rumble and wind rise with speed, rough surfaces add texture, and tire squeal
-  follows slip. Movement audio fades on pause and respects SFX volume and mute.
-  The audio context unlocks on the first click/tap (browser rule).
-- **Data** — everything persists in `localStorage` under the `rainrift.v1` key:
-  settings, loadout, per-track bests, career stats and the last 60 races.
-
-## Testing checklist
-
-Use this after any change:
-
-1. Load the page — loading screen → main menu with **no console errors**.
-2. Characters: cycle, preview rotates, confirm → menu slot updates, survives reload.
-3. Garage: pick a vehicle + paint, confirm → menu slot updates, survives reload.
-4. Tracks: select each of the 4 circuits and each difficulty; the hint text changes.
-5. Race: countdown → drive → drift (`Space`) → item (`Shift`) → 3 laps → results.
-6. Results: position, time, best lap, points, standings rows, `+1` leaderboard row.
-7. Pause (`Esc`): time freezes, resume/restart/quit all work.
-8. Leaderboard + Settings (volumes, mute, quality, touch, name, reset) + How to Play.
-9. Reload with everything above persisted; no errors in the console at any point.
-10. Resize the window and try a phone-size viewport: layout and touch pad adapt.
-
-**Debug handle:** `window.__TR` exposes `{ race, ui, input, audio, startRace,
-togglePause, quitToMenu }` for running the checks above from the devtools
-console (for example `__TR.startRace({ trackId: 'forest', difficulty: 'hard' })`).
-
-## Data & privacy
-
-There is no server and no analytics. Leaderboards, settings and progress are
-stored only in this browser's `localStorage`; clearing site data (or **Reset all
-saved progress** in Settings) wipes them.
-
-## Browser support
-
-Evergreen Chrome, Edge, Firefox and Safari with WebGL. If WebGL is unavailable
-the game shows a clear message instead of a black screen. Low quality mode is
-aimed at older laptops and phones: reduced resolution, no shadows, lighter
-scenery.
-
-## Credits
-
-Designed, coded and synthesized by **Zunnorain Carti**. All art, models, tracks,
-music and sound effects are original and generated at runtime — no third-party
-assets. Three.js is MIT-licensed.
-
-MIT licensed — see `package.json`.
+Start your engine. Find your racing line. Own the track. 🏎️
